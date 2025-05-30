@@ -3,9 +3,14 @@ import React, { useState } from "react";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-export default function DatePickerComp() {
+export default function DatePickerComp({
+  date,
+  setDate,
+}: {
+  date: Date;
+  setDate: React.Dispatch<React.SetStateAction<Date>>;
+}) {
   const [show, setShow] = useState(false);
-  const [date, setDate] = useState(new Date());
   const onChange = (
     event: DateTimePickerEvent,
     selectedDate?: Date | undefined
@@ -18,7 +23,7 @@ export default function DatePickerComp() {
     setShow(true);
   };
   return (
-    <View className="flex-row p-2">
+    <View className="flex-row">
       <TouchableOpacity
         onPress={handlePress}
         className={`

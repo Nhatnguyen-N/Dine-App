@@ -1,8 +1,12 @@
+import { auth, db } from "@/config/firebaseConfig";
 import validationSchema from "@/utils/authSchema";
 import { useRouter } from "expo-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { Formik } from "formik";
 import React from "react";
 import {
+  Alert,
   Image,
   ScrollView,
   StatusBar,
@@ -12,10 +16,40 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function SignUp() {
   const router = useRouter();
 
-  const handleSignup = () => {};
+  const handleSignup = async (values: any) => {
+    try {
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+      const user = userCredentials.user;
+      await setDoc(doc(db, "users", user.uid), {
+        email: values.email,
+        createdAt: new Date(),
+      });
+      await AsyncStorage.setItem("userEmail", values.email);
+      router.push("/(tabs)/home");
+    } catch (error: any) {
+      if (error.code === "auth/email-already-in-use") {
+        Alert.alert(
+          "Signup Failed!",
+          "This email address is already in use. Please use a different email.",
+          [{ text: "OK" }]
+        );
+      } else {
+        Alert.alert(
+          "Signup Error",
+          "An unexpected error occurred. Please try again later.",
+          [{ text: "OK" }]
+        );
+      }
+    }
+  };
   return (
     <SafeAreaView className={`bg-[#2b2b2b]`}>
       <ScrollView contentContainerStyle={{ height: "100%" }}>
@@ -105,7 +139,7 @@ export default function SignUp() {
 
               <TouchableOpacity
                 className="flex-row items-center mb-5 p-2 justify-center gap-1"
-                onPress={() => router.push("/home")}
+                onPress={() => router.push("/(tabs)/home")}
               >
                 <Text className="text-white font-semibold">Be a</Text>
                 <Text className="text-base font-semibold underline text-[#f49b33]">

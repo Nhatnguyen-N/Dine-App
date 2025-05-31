@@ -1,5 +1,6 @@
 import { RestaurantType } from "@/assets/types/restaurants.types";
 import { db } from "@/config/firebaseConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { collection, DocumentData, getDocs, query } from "firebase/firestore";
@@ -22,6 +23,11 @@ export default function Home() {
     RestaurantType[] | DocumentData[]
   >([]);
 
+  const temp = async () => {
+    const value = await AsyncStorage.getItem("isGuest");
+    const email = await AsyncStorage.getItem("userEmail");
+    console.log(value, email);
+  };
   const renderItem = ({ item }: { item: RestaurantType }) => (
     <TouchableOpacity
       onPress={() => router.push(`/restaurant/${item.name}`)}
@@ -48,6 +54,7 @@ export default function Home() {
   };
   useEffect(() => {
     getRestaurants();
+    temp();
   }, []);
   return (
     <SafeAreaView

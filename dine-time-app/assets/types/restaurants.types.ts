@@ -15,3 +15,11 @@ export type SlotType = {
   ref_id: string,
   slot: string[]
 }
+export type BookingType = {
+  id: string,
+  date: string,
+  email: string,
+  guests: number,
+  restaurant: string,
+  slot: string,
+}

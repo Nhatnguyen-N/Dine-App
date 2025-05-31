@@ -19,7 +19,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function SignUp() {
   const router = useRouter();
-
+  const handleGuest = async () => {
+    await AsyncStorage.setItem("isGuest", "true");
+    router.push("/(tabs)/home");
+  };
   const handleSignup = async (values: any) => {
     try {
       const userCredentials = await createUserWithEmailAndPassword(
@@ -33,6 +36,7 @@ export default function SignUp() {
         createdAt: new Date(),
       });
       await AsyncStorage.setItem("userEmail", values.email);
+      await AsyncStorage.setItem("isGuest", "false");
       router.push("/(tabs)/home");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
@@ -139,7 +143,7 @@ export default function SignUp() {
 
               <TouchableOpacity
                 className="flex-row items-center mb-5 p-2 justify-center gap-1"
-                onPress={() => router.push("/(tabs)/home")}
+                onPress={handleGuest}
               >
                 <Text className="text-white font-semibold">Be a</Text>
                 <Text className="text-base font-semibold underline text-[#f49b33]">

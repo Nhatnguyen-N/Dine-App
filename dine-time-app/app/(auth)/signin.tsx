@@ -19,7 +19,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function SignIn() {
   const router = useRouter();
-
+  const handleGuest = async () => {
+    await AsyncStorage.setItem("isGuest", "true");
+    router.push("/(tabs)/home");
+  };
   const handleSignin = async (values: any) => {
     try {
       const userCredentials = await signInWithEmailAndPassword(
@@ -33,6 +36,7 @@ export default function SignIn() {
       if (userDoc.exists()) {
         console.log("User Data:", userDoc.data());
         await AsyncStorage.setItem("userEmail", values.email);
+        await AsyncStorage.setItem("isGuest", "false");
         router.push("/(tabs)/home");
       } else {
         console.log("No such Doc");
@@ -140,7 +144,7 @@ export default function SignIn() {
 
               <TouchableOpacity
                 className="flex-row items-center mb-5 p-2 justify-center gap-1"
-                onPress={() => router.push("/home")}
+                onPress={handleGuest}
               >
                 <Text className="text-white font-semibold">Be a</Text>
                 <Text className="text-base font-semibold underline text-[#f49b33]">
